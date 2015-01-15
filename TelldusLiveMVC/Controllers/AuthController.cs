@@ -12,12 +12,6 @@ namespace TelldusLiveMVC.Controllers
 {
     public class AuthController : Controller
     {
-        //
-        // GET: /Auth/
-
-        private const string OAuthTokenKey = "oauth_token";
-        private const string OAuthTokenSecretKey = "oauth_token_secret";
-
         string baseUrl = "http://api.telldus.com/";
         
         public ActionResult Index()

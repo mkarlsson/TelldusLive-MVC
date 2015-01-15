@@ -30,11 +30,9 @@ namespace TelldusLiveMVC.Controllers
             
             string content = response.Content;
 
-            TelldusLiveDevices deviceList = JsonConvert.DeserializeObject<TelldusLiveDevices>(content);
+            var deviceList = JsonConvert.DeserializeObject<TelldusLiveDevices>(content);
 
-            ViewBag.deviceList = deviceList;
-
-            return View();
+            return View(deviceList);
         }
 
         public ActionResult ListSensors()
@@ -51,11 +49,9 @@ namespace TelldusLiveMVC.Controllers
             
             string content = response.Content;
 
-            TelldusLiveSensors sensorList = JsonConvert.DeserializeObject<TelldusLiveSensors>(content);
+            var sensorList = JsonConvert.DeserializeObject<TelldusLiveSensors>(content);
 
-            ViewBag.sensorList = sensorList;
-
-            return View();
+            return View(sensorList);
         }
 
         public JsonResult TurnOnAndOffDevice(string id, bool on)
@@ -105,7 +101,30 @@ namespace TelldusLiveMVC.Controllers
             return Json("OK", JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SensorInfo(string id)
+        //public ActionResult SensorInfo(string id)
+        //{
+        //    var client = new RestClient(baseUrl);
+
+        //    client.Authenticator = OAuth1Authenticator.ForProtectedResource(
+        //        ConfigHelper.TelldusLiveConsumerKey, ConfigHelper.TelldusLiveConsumerSecret, TelldusLiveHelper.OAuthToken, TelldusLiveHelper.OAuthTokenSecret
+        //    );
+
+        //    string method = "json/sensor/info";
+
+        //    var request = new RestRequest(method, Method.GET);
+
+        //    request.AddParameter("id", id);
+
+        //    var response = client.Execute(request);
+        //    // {"id":"2468083","clientName":"Tellstick Net Hemma","name":"Temp1","lastUpdated":1419175960,"ignored":0,"editable":1,"data":[{"name":"temp","value":"24.2"},{"name":"humidity","value":"23"}],"protocol":"mandolyn","sensorId":"13","timezoneoffset":3600}
+        //    string content = response.Content;
+
+        //    TelldusLiveSensorInfo sensorInfo = JsonConvert.DeserializeObject<TelldusLiveSensorInfo>(content);
+
+        //    return View(sensorInfo);
+        //}
+
+        public JsonResult SensorInfo(string id)
         {
             var client = new RestClient(baseUrl);
 
@@ -123,9 +142,9 @@ namespace TelldusLiveMVC.Controllers
             // {"id":"2468083","clientName":"Tellstick Net Hemma","name":"Temp1","lastUpdated":1419175960,"ignored":0,"editable":1,"data":[{"name":"temp","value":"24.2"},{"name":"humidity","value":"23"}],"protocol":"mandolyn","sensorId":"13","timezoneoffset":3600}
             string content = response.Content;
 
-            TelldusLiveSensorInfo sensorInfo = JsonConvert.DeserializeObject<TelldusLiveSensorInfo>(content);
-
-            return View(sensorInfo);
+            //TelldusLiveSensorInfo sensorInfo = JsonConvert.DeserializeObject<TelldusLiveSensorInfo>(content);
+            return Json(content, JsonRequestBehavior.AllowGet);
+           
         }
     }
 }

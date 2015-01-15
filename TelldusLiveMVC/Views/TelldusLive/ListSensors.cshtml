@@ -1,12 +1,9 @@
-﻿@{
+﻿@model TelldusLiveMVC.Models.TelldusLiveSensors
+@{
     ViewBag.Title = "Sensors";
-
-    TelldusLiveMVC.Models.TelldusLiveSensors sensorList = ViewBag.sensorList as TelldusLiveMVC.Models.TelldusLiveSensors;
 }
-
 <h2>@ViewBag.Title</h2>
-
-@if (sensorList.sensor == null || sensorList.sensor.Count == 0)
+@if (Model.sensor == null || Model.sensor.Count == 0)
 {
     <i>No sensors found</i>
 }
@@ -24,19 +21,57 @@ else
             <th>lastUpdated</th>
             <th></th>
         </tr>
-        @foreach (var device in sensorList.sensor)
-        {
-            <tr>
-                <td>@device.id</td>
-                <td>@device.name</td>
-                <td>@device.client</td>
-                <td>@device.clientName</td>
-                <td>@device.editable</td>
-                <td>@device.online</td>
-                <td>@device.ignored</td>
-                <td>@device.lastUpdated</td>
-                <th><a href="/TelldusLive/SensorInfo/@device.id" class="btn btn-default">Sensor info</a></th>
-            </tr>
+        @{
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            foreach (var device in Model.sensor)
+            {
+                <tr>
+                    <td>@device.id</td>
+                    <td>@device.name</td>
+                    <td>@device.client</td>
+                    <td>@device.clientName</td>
+                    <td>@device.editable</td>
+                    <td>@device.online</td>
+                    <td>@device.ignored</td>
+                    <td>@dtDateTime.AddSeconds(Int64.Parse(device.lastUpdated)).ToLocalTime();</td>
+
+                    <th><button onclick="getData(@device.id)" class="btn btn-default">Sensor info</button></th>
+                </tr>
+        
+            }
         }
     </table>
+    <div id="resultArea"></div>
+}
+
+@section scripts{
+    <script>
+        function getData(deviceId) {
+            var url = "/TelldusLive/SensorInfo";
+            $.ajax({
+                type: "Get",
+                url: url,
+                //dataType: "json",
+                data: {
+                    id: deviceId
+                },
+                success: function (result) {
+                    displayResult(result);
+
+                },
+                error: function (xhr, status, error) {
+                    alert('Tried ajax request and failed: displaying offline catalog of roughly 1MB instead');
+                }
+            });
+        }
+
+        function displayResult(result) {
+            var sensor = jQuery.parseJSON(result);
+                // Add a list item for the product.
+            $('<ul><li>' + sensor.data[0].name + ': ' + sensor.data[0].value + '</li>' +
+                '<li>' + sensor.data[1].name +': '+ sensor.data[1].value + '</li>' +
+                '</ul>').appendTo($('#resultArea'));
+        }
+       
+    </script>
 }
